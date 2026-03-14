@@ -1,29 +1,25 @@
-import { ethers } from "hardhat";
+import { network } from "hardhat";
 
 async function main() {
-  const [deployer] = await ethers.getSigners();
+  const { viem } = await network.connect();
+  const [deployer] = await viem.getWalletClients();
 
-  console.log("Deploying contracts with account:", deployer.address);
+  console.log("Deploying contracts with account:", deployer.account.address);
 
   // Deploy OBT token with full supply to deployer (or a treasury in the future).
-  const OBTToken = await ethers.getContractFactory("OBTToken");
-  const obtToken = await OBTToken.deploy(deployer.address);
-  await obtToken.waitForDeployment();
-
-  const obtTokenAddress = await obtToken.getAddress();
-  console.log("OBTToken deployed to:", obtTokenAddress);
+  const obtToken = await viem.deployContract("OBTToken", [
+    deployer.account.address,
+  ]);
+  console.log("OBTToken deployed to:", obtToken.address);
 
   // Deploy Governor using OBT as the voting token.
-  const OBTGovernor = await ethers.getContractFactory("OBTGovernor");
-  const governor = await OBTGovernor.deploy(obtTokenAddress);
-  await governor.waitForDeployment();
-
-  const governorAddress = await governor.getAddress();
-  console.log("OBTGovernor deployed to:", governorAddress);
+  const governor = await viem.deployContract("OBTGovernor", [obtToken.address]);
+  console.log("OBTGovernor deployed to:", governor.address);
 
   // Optional: self-delegate deployer's tokens so they can propose and vote.
-  const delegateTx = await obtToken.delegate(deployer.address);
-  await delegateTx.wait();
+  await obtToken.write.delegate([deployer.account.address], {
+    account: deployer.account,
+  });
   console.log("Delegated OBT voting power to deployer");
 }
 

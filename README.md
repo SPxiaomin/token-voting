@@ -17,7 +17,7 @@ The high-level plan comes from the attached project plan and is documented here 
 - `contracts/OBTGovernor.sol` – Governor that uses OBT voting power for token-weighted proposals and voting.
 - `scripts/deploy.ts` – Deployment script for OBT token and Governor, including optional self-delegation of votes.
 - `test/OBTToken.test.ts` – Tests for token metadata, supply, transfers, and voting power via delegation.
-- `test/OBTGovernor.test.ts` – Tests for proposal creation, voting with token weights, and proposal execution.
+- `test/OBTGovernor.ts` – Tests for proposal creation, voting with token weights, and proposal execution using typed viem helpers.
 
 ---
 
@@ -38,41 +38,44 @@ The high-level plan comes from the attached project plan and is documented here 
 
 ### Prerequisites
 
-- Node.js and npm installed locally.
+- Node.js and **pnpm** installed locally.
 
 ### Install dependencies
 
 From the project root:
 
 ```bash
-npm install
+pnpm install
 ```
 
 ### Compile contracts
 
 ```bash
-npm run build
+pnpm run build
 ```
 
 ### Run tests
 
 ```bash
-npm test
+pnpm test
 ```
+
+### Compiler / optimizer profile
+
+For local development and testing, the default Solidity profile is configured with the optimizer enabled to keep the `OBTGovernor` bytecode under the EVM contract size limit. The production profile can use different optimizer settings if needed for mainnet deployments.
 
 ### Deploy
 
 Deploy to the default Hardhat network:
 
 ```bash
-npx hardhat run scripts/deploy.ts
+pnpm exec hardhat run scripts/deploy.ts
 ```
 
 Or to a configured network:
 
 ```bash
-npx hardhat run scripts/deploy.ts --network <network>
+pnpm exec hardhat run scripts/deploy.ts --network <network>
 ```
 
 This README will be kept up to date alongside major code changes, including any adjustments to governance parameters such as quorum, voting period, or proposal thresholds.
-

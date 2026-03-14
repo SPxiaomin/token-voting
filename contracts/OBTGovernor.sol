@@ -64,8 +64,8 @@ contract OBTGovernor is
         uint8 support,
         uint256 weight,
         bytes memory params
-    ) internal override(Governor, GovernorCountingSimple) {
-        super._countVote(proposalId, account, support, weight, params);
+    ) internal override(Governor, GovernorCountingSimple) returns (uint256) {
+        return super._countVote(proposalId, account, support, weight, params);
     }
 
     function supportsInterface(
